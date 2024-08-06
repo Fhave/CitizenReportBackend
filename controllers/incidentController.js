@@ -11,31 +11,17 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'uploads/');
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
-//     }
-// });
-
-// const upload = multer({ storage });
-
-// exports.uploadMiddleware = upload.single('image');
-
 exports.addIncident = async (req, res) => {
     const { title, description, category, latitude, longitude } = req.body;
-    // Set user to null if not authenticated
     const user = req.user ? req.user.id : null;
-    const { image } = req.files.image;
 
     try {
         let imageUrl = '';
         if (req.file) {
-            const result = await cloudinary.uploader.upload(req.files.image.tempFilePath, {
+            const result = await cloudinary.uploader.upload(req.file.path, {
                 folder: 'incident',
             });
+            imageUrl = result.secure_url;
         }
 
         const incident = new Incident({
@@ -44,21 +30,17 @@ exports.addIncident = async (req, res) => {
             category,
             latitude,
             longitude,
-            image: {
-                public_id: result.public_id,
-                url: result.secure_url,
-            },
+            image: imageUrl,
             user
         });
 
         await incident.save();
         res.json({ success: true });
     } catch (err) {
-        console.error(err.message);
+        console.error('Server error:', err.message);
         res.status(500).send('Server error');
     }
 };
-
 
 exports.getIncidents = async (req, res) => {
     try {
