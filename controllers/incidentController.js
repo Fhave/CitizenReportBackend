@@ -25,7 +25,7 @@ const upload = multer({ storage });
 exports.uploadMiddleware = upload.single('image');
 
 exports.addIncident = async (req, res) => {
-    const { title, description, category } = req.body;
+    const { title, description, category, latitude, longitude } = req.body;
     // const user = req.user.id;
 
     try {
@@ -39,6 +39,8 @@ exports.addIncident = async (req, res) => {
             title,
             description,
             category,
+            latitude,
+            longitude,
             image: imageUrl,
             // user
         });

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const IncidentSchema = new mongoose.Schema({
+const IncidentSchema = new Schema({
     title: {
         type: String,
         required: true
@@ -13,17 +14,25 @@ const IncidentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    latitude: {
+        type: Number,
+        required: true
+    },
+    longitude: {
+        type: Number,
+        required: true
+    },
     image: {
         type: String
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        type: Schema.Types.ObjectId,
+        ref: 'users'
     },
-    created_at: {
+    date: {
         type: Date,
         default: Date.now
     }
 });
 
-module.exports = mongoose.model('Incident', IncidentSchema);
+module.exports = mongoose.model('incident', IncidentSchema);
