@@ -4,7 +4,7 @@ const authMiddleware = require('../config/authMiddleware');
 
 const router = express.Router();
 
-router.post('/add', uploadMiddleware, addIncident);
+router.post('/add', addIncident);
 router.get('/get', getIncidents);
 router.get('/getByCategory', getIncidentsByCategory);
 
