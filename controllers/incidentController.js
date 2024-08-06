@@ -13,16 +13,14 @@ cloudinary.config({
 
 exports.addIncident = async (req, res) => {
     const { title, description, category, latitude, longitude } = req.body;
+    // Set user to null if not authenticated
     const user = req.user ? req.user.id : null;
+    const { image } = req.files.image;
 
     try {
-        let imageUrl = '';
-        if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path, {
-                folder: 'incident',
-            });
-            imageUrl = result.secure_url;
-        }
+        const result = await cloudinary.uploader.upload(req.files.image.tempFilePath, {
+            folder: 'incident',
+        });
 
         const incident = new Incident({
             title,
@@ -30,18 +28,20 @@ exports.addIncident = async (req, res) => {
             category,
             latitude,
             longitude,
-            image: imageUrl,
+            image: {
+                public_id: result.public_id,
+                url: result.secure_url,
+            },
             user
         });
 
         await incident.save();
         res.json({ success: true });
     } catch (err) {
-        console.error('Server error:', err.message);
+        console.error(err.message);
         res.status(500).send('Server error');
     }
 };
-
 exports.getIncidents = async (req, res) => {
     try {
         const incidents = await Incident.find().populate('user', ['username']);
@@ -63,12 +63,12 @@ exports.getIncidentsByCategory = async (req, res) => {
     }
 };
 
-// exports.getIncidentsByCategory = async (req, res) => {
-//     const category = req.query.category;
-//     try {
-//         const incidents = await Incident.find({ category }).populate('user', ['username'])
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).send('Server error');
-//     }
-// };
+exports.getUserIncidents = async (req, res) => {
+    try {
+        const incidents = await Incident.find({ user: req.user.id }).populate('user', ['username']);
+        res.json({ incidents });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+};
