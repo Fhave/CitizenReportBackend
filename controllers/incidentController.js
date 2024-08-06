@@ -26,7 +26,8 @@ exports.uploadMiddleware = upload.single('image');
 
 exports.addIncident = async (req, res) => {
     const { title, description, category, latitude, longitude } = req.body;
-    // const user = req.user.id;
+    // Set user to null if not authenticated
+    const user = req.user ? req.user.id : null;
 
     try {
         let imageUrl = '';
@@ -42,7 +43,7 @@ exports.addIncident = async (req, res) => {
             latitude,
             longitude,
             image: imageUrl,
-            // user
+            user
         });
 
         await incident.save();
@@ -52,6 +53,7 @@ exports.addIncident = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
 
 exports.getIncidents = async (req, res) => {
     try {
