@@ -26,7 +26,7 @@ exports.uploadMiddleware = upload.single('image');
 
 exports.addIncident = async (req, res) => {
     const { title, description, category } = req.body;
-    const user = req.user.id;
+    // const user = req.user.id;
 
     try {
         let imageUrl = '';
@@ -40,7 +40,7 @@ exports.addIncident = async (req, res) => {
             description,
             category,
             image: imageUrl,
-            user
+            // user
         });
 
         await incident.save();
