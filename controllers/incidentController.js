@@ -73,3 +73,13 @@ exports.getIncidentsByCategory = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
+// exports.getIncidentsByCategory = async (req, res) => {
+//     const category = req.query.category;
+//     try {
+//         const incidents = await Incident.find({ category }).populate('user', ['username'])
+//     } catch (err) {
+//         console.error(err.message);
+//         res.status(500).send('Server error');
+//     }
+// };
